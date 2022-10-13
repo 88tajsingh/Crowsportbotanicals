@@ -10,8 +10,6 @@ class Sport extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'sports_id',
         'sports_name',
         'status',
     ];

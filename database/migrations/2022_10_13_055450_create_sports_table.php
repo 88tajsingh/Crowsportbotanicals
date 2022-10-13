@@ -15,10 +15,8 @@ return new class extends Migration
     {
         Schema::create('sports', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->integer('sports_id');
             $table->string('sports_name');
-            $table->integer('status');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }
