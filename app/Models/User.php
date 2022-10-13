@@ -26,6 +26,7 @@ class User extends Authenticatable
         'age',
         'describes_you',
         'allow_notification',
+        'sports_id',
     ];
 
     /**
@@ -46,10 +47,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-
-    public function getsports()
-    {
-        return $this->hasMany(Sport::class,'user_id','id');
-    }
 }

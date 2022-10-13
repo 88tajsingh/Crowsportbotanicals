@@ -20,8 +20,7 @@ class RegisterController extends Controller
             'email' => 'required|email|unique:users',
             'gender' => 'required',
             'age' => 'required|numeric',
-            'sports' => 'required',
-            'sports.*.sports_id' => 'required|numeric|in:1,2,3',
+            'sports' => 'required|array|in:1,2,3',
             'describes_you' => 'required',
             'allow_notification' => 'required|boolean',
         ]);
@@ -40,12 +39,14 @@ class RegisterController extends Controller
         $data['email'] = $user->email;
         $data['gender'] = $user->gender;
         $data['age'] = $user->age;
-        foreach($user->getsports as $getsport)
+        $arraySports = explode(',', $user->sports_id);
+        foreach($arraySports as $k=>$sport)
         {
-            $sports['sports_id'] = $getsport->sports_id;
-            $sports['sports_name'] = $getsport->sports_name;
+            $SportsData = Sport::where('id',$sport)->first();
+            $sports[$k]['sports_id'] = $SportsData->id;
+            $sports[$k]['sports_name'] = $SportsData->sports_name;
         }
-        $data['sports'] =$sports;
+        $data['sports'] = $sports;
         $data['describes_you'] = $user->describes_you;
         $data['allow_notification'] = $user->allow_notification;
 
@@ -62,19 +63,11 @@ class RegisterController extends Controller
             'gender' => $data['gender'],
             'email' => $data['email'],
             'age' => $data['age'],
+            'sports_id' => implode(", ", $data['sports']),
             'describes_you' => $data['describes_you'],
             'allow_notification' => $data['allow_notification'],
 
         ]);
-        foreach($data['sports'] as $sport)
-        {
-            Sport::create([
-                'user_id' => $user->id,
-                'sports_id'=> $sport['sports_id'],
-                'sports_name'=> $sport['sports_name'],
-                'status'=> 1,
-            ]);
-        }
 
         return $user; 
     }
@@ -84,10 +77,10 @@ class RegisterController extends Controller
     {
         $sports = Sport::get();
         $data =[];
-        foreach($sports as $sport)
+        foreach($sports as $k=>$sport)
         {
-            $data['sports_id'] = $sport->sports_id;
-            $data['sports_name'] = $sport->sports_name;
+            $data[$k]['sports_id'] = $sport->id;
+            $data[$k]['sports_name'] = $sport->sports_name;
         }
         return response()->json(["success" => 1, "message" => '' ,"data"=> $data], 200);
 
